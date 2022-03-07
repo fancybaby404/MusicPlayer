@@ -1,14 +1,22 @@
+package com.musicplayer;
+
 import javax.sound.sampled.*;
+import java.io.File;
+import java.io.IOException;
 
 class AppMusic {
 
     Long currentMicro;
+    Clip clip;
+    File file;
+    AudioInputStream audioStream;
 
-    AppMusic (String pathFile) {
+    AppMusic(String pathFile) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
         // instantiate
-        File file = new File(pathFile);
-        AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
-        Clip clip = AudioSystem.getClip();
+        file = new File(pathFile);
+        audioStream = AudioSystem.getAudioInputStream(file);
+        clip = AudioSystem.getClip();
+
         clip.open(audioStream);
         clip.start();
 
@@ -16,9 +24,9 @@ class AppMusic {
         currentMicro = (long) 0;
     }
 
-    void playMusic () {
+    void playMusic() {
         if (currentMicro == 0) {
-            clip.play();
+            clip.start();
         } else {
             try {
                 clip.start();
@@ -29,46 +37,46 @@ class AppMusic {
         }
     }
 
-    void pauseMusic () {
+    void pauseMusic() {
         currentMicro = clip.getMicrosecondPosition();
         clip.stop();
 
     }
 
-    void resetMusic () {
+    void resetMusic() {
         clip.setMicrosecondPosition(0);
     }
 
 }
-    
+
 //     try {
 //         String response = "";
 
 //         while (!response.equalsIgnoreCase("0")) {
-            // System.out.println(
-            //         "Welcome to JulianAudio\nType (0) to stop\n  Type (1) to reset\n  Type (2) to pause\nType (3) to resume");
-            // Scanner scanner = new Scanner(System.in);
-            // response = scanner.next();
+// System.out.println(
+//         "Welcome to JulianAudio\nType (0) to stop\n  Type (1) to reset\n  Type (2) to pause\nType (3) to resume");
+// Scanner scanner = new Scanner(System.in);
+// response = scanner.next();
 
 //             switch (response) {
 //                 case "0":
-                // stop
+// stop
 //                     clip.stop();
 //                     break;
 
 //                 case "1":
-                //reset i think?
+//reset i think?
 //                     clip.setMicrosecondPosition(0);
 //                     break;
 
 //                 case "2":
-                // pause?
+// pause?
 //                     currentMicro = clip.getMicrosecondPosition();
 //                     clip.stop();
 //                     break;
 
 //                 case "3":
-                // resume?
+// resume?
 
 //                     try {
 //                         clip.start();
