@@ -5,7 +5,7 @@ import javax.swing.JFrame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class AppFrame extends JFrame implements ActionListener {
+public class AppFrame extends JFrame {
 
     AppFrame() {
         setVisible(true);
@@ -13,11 +13,5 @@ public class AppFrame extends JFrame implements ActionListener {
         getContentPane().setLayout(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        // TODO Auto-generated method stub
-        
     }
 }

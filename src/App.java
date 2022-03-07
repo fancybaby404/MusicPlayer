@@ -33,7 +33,21 @@ public class App {
         resetButton.addActionListener(e -> System.out.println("reset button clicked"));
 
         // Create Drag and Drop
-
+        JTextArea myPanel = new JTextArea();
+        myPanel.setDropTarget(new DropTarget() {
+            public synchronized void drop(DropTargetDropEvent evt) {
+                // try {
+                    evt.acceptDrop(DnDConstants.ACTION_COPY);
+                    List<File> droppedFiles = (List<File>) evt.getTransferable()
+                            .getTransferData(DataFlavor.javaFileListFlavor);
+                    for (File file : droppedFiles) {
+                        // process files
+                    }
+                // } catch (Exception ex) {
+                    // ex.printStackTrace();
+                // }
+            }
+        });
 
         // Add components
         AppFrame frame = new AppFrame();
@@ -41,8 +55,10 @@ public class App {
         frame.add(playButton);
         frame.add(pauseButton);
         frame.add(resetButton);
+        frame.add(myPanel);
 
         // ------------------------------ Music Player
+        // AppMusic music = new AppMusic();
 
         // if (playButton.isEna) {
 
