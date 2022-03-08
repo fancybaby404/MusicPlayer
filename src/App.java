@@ -1,6 +1,6 @@
 package com.musicplayer;
 
-import java.awt.Font;
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.*;
 
 public class App {
+
     public static void main(String[] args) {
 
         // Create Drag and Drop
@@ -18,6 +19,13 @@ public class App {
         myPanel.setText("Drag a audio file here!");
         myPanel.setBounds(0, 200, 500, 50);
         myPanel.setEditable(false);
+
+        // label for music name
+        JLabel fileNameLabel = new JLabel();
+        ImageIcon icon = new ImageIcon(System.getProperty("user.dir") + "/pictures/musicicon.png");
+        ImageIcon imageIcon = new ImageIcon(icon.getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT));
+        fileNameLabel.setBounds(0, 360, 500, 50);
+        fileNameLabel.setFont(new Font("Arial", Font.BOLD, 10));
 
         String[] fileName = new String[1];
         myPanel.setDropTarget(new DropTarget() {
@@ -27,14 +35,16 @@ public class App {
                     List<File> droppedFiles = (List<File>) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
                     for (File file : droppedFiles) {
                         fileName[0] = file.toString();
-                        System.out.println(fileName[0]);
+                        String splittedFileName[] = fileName[0].split("/");
+                        fileNameLabel.setIcon(imageIcon);
+                        fileNameLabel.setText(splittedFileName[splittedFileName.length - 1]);
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
         });
-        myPanel.setLayout(null);
+//        myPanel.setLayout(null);
 
         // ------------------------------ Instantiating the AppMusic class
         // ain't done
@@ -45,7 +55,7 @@ public class App {
         JLabel titleHeader = new JLabel();
         titleHeader.setText("MusicPlayer");
         titleHeader.setBounds(10, 0, 200, 50);
-        titleHeader.setLayout(null);
+//        titleHeader.setLayout(null);
         titleHeader.setFont(new Font("Arial", Font.BOLD, 20));
 
         // Create Buttons
@@ -55,9 +65,9 @@ public class App {
         playButton.addActionListener(e -> {
             if (fileName[0] == null) {
                 // show error box that there is no file dropped
+                showError();
             }
 
-            System.out.println(fileName[0]);
             System.out.println("play button clicked");
         });
 
@@ -67,6 +77,7 @@ public class App {
         pauseButton.addActionListener(e -> {
             if (fileName[0] == null) {
                 // show error box that there is no file dropped
+                showError();
             }
             System.out.println("pause button clicked");
         });
@@ -77,6 +88,7 @@ public class App {
         resetButton.addActionListener(e -> {
             if (fileName[0] == null) {
                 // show error box that there is no file dropped
+                showError();
             }
             System.out.println("reset button clicked");
         });
@@ -88,6 +100,7 @@ public class App {
         frame.add(playButton);
         frame.add(pauseButton);
         frame.add(resetButton);
+        frame.add(fileNameLabel);
 
         // ------------------------------ Music Player
         // AppMusic music = new AppMusic();
@@ -95,5 +108,11 @@ public class App {
         // if (playButton.isEna) {
 
         // }
+    }
+
+    static void showError() {
+        String message = "Please drag a mp3/wav file into the application first before starting!";
+        JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",
+                JOptionPane.ERROR_MESSAGE);
     }
 }

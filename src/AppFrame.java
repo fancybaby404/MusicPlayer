@@ -1,6 +1,6 @@
 package com.musicplayer;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,4 +14,5 @@ public class AppFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
     }
+
 }
