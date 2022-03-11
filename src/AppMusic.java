@@ -11,40 +11,55 @@ class AppMusic {
     File file;
     AudioInputStream audioStream;
 
-    AppMusic(String pathFile) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+    AppMusic() {
         // instantiate
-        file = new File(pathFile);
-        audioStream = AudioSystem.getAudioInputStream(file);
-        clip = AudioSystem.getClip();
-
-        clip.open(audioStream);
-        clip.start();
 
         // global vars
         currentMicro = (long) 0;
     }
 
-    void playMusic() {
+    void playMusic(String pathFile) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+        file = new File(pathFile);
+
+
         if (currentMicro == 0) {
+            audioStream = AudioSystem.getAudioInputStream(file);
+            clip = AudioSystem.getClip();
+            clip.open(audioStream);
+
             clip.start();
+            System.out.println("current micro is 0");
         } else {
             try {
-                clip.start();
+                System.out.println("current micro is NOT 0");
                 clip.setMicrosecondPosition(currentMicro);
+                clip.start();
             } catch (Exception e) {
-
+                System.out.println(e);
             }
         }
     }
 
     void pauseMusic() {
-        currentMicro = clip.getMicrosecondPosition();
-        clip.stop();
+        if (clip == null) {
+            App.showError("Please drag a mp3/wav file into the application first!");
+        } else {
+            currentMicro = clip.getMicrosecondPosition();
+            clip.stop();
+        }
 
     }
 
     void resetMusic() {
-        clip.setMicrosecondPosition(0);
+
+        if (clip == null) {
+            App.showError("Please drag a mp3/wav file into the application first!");
+        } else {
+//            clip.setMicrosecondPosition(0);
+            clip.stop();
+//            clip.close();
+        }
+
     }
 
 }
