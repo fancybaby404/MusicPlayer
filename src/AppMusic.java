@@ -10,6 +10,7 @@ class AppMusic {
     Clip clip;
     File file;
     AudioInputStream audioStream;
+    public boolean failed;
 
     AppMusic() {
         // instantiate
@@ -18,25 +19,36 @@ class AppMusic {
         currentMicro = (long) 0;
     }
 
-    void playMusic(String pathFile) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-        file = new File(pathFile);
+
+    void playMusic(String pathFile) {
+
+        try {
+
+            file = new File(pathFile);
 
 
-        if (currentMicro == 0) {
-            audioStream = AudioSystem.getAudioInputStream(file);
-            clip = AudioSystem.getClip();
-            clip.open(audioStream);
+            if (currentMicro == 0) {
+                audioStream = AudioSystem.getAudioInputStream(file);
+                clip = AudioSystem.getClip();
+                clip.open(audioStream);
 
-            clip.start();
-            System.out.println("current micro is 0");
-        } else {
-            try {
+                clip.start();
+                System.out.println("current micro is 0");
+            } else {
                 System.out.println("current micro is NOT 0");
                 clip.setMicrosecondPosition(currentMicro);
                 clip.start();
-            } catch (Exception e) {
-                System.out.println(e);
             }
+
+        } catch (LineUnavailableException e) {
+            e.printStackTrace();
+            this.failed = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            this.failed = true;
+        } catch (UnsupportedAudioFileException e) {
+            e.printStackTrace();
+            this.failed = true;
         }
     }
 
@@ -53,7 +65,7 @@ class AppMusic {
     void resetMusic() {
 
         if (clip == null) {
-            App.showError("Please drag a mp3/wav file into the application first!");
+            App.showError("Successfully reset");
         } else {
 //            clip.setMicrosecondPosition(0);
             clip.stop();
