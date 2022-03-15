@@ -67,13 +67,29 @@ class AppMusic {
         if (clip == null) {
             App.showError("Successfully reset");
         } else {
-//            clip.setMicrosecondPosition(0);
+            clip.setMicrosecondPosition(0);
             clip.stop();
-//            clip.close();
         }
 
     }
 
+    public float getVolume() {
+        if (clip == null) {
+            return 0f;
+        }
+        FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+        return (float) Math.pow(10f, gainControl.getValue() / 20f);
+    }
+
+    public void setVolume(float volume) {
+        if (clip == null) {
+            return;
+        }
+        if (volume < 0f || volume > 1f)
+            throw new IllegalArgumentException("Volume not valid: " + volume);
+        FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+        gainControl.setValue(20f * (float) Math.log10(volume));
+    }
 }
 
 //     try {

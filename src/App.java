@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicButtonUI;
 
 
@@ -28,6 +30,7 @@ public class App {
     static String[] fileName = new String[1];
     static Integer intCurrentSeconds = 0;
     static int currentMinutes = 0;
+    static JButton volumeButton;
 
     public static void main(String[] args) {
 
@@ -39,7 +42,7 @@ public class App {
         // Create Drag and Drop
         JTextPane myPanel = new JTextPane();
         myPanel.setText("Drag a audio file here!");
-        myPanel.setBounds(0, 200, 500, 50);
+        myPanel.setBounds(0, 80, 500, 50);
         myPanel.setEditable(false);
 
         // ------------------------------ GUI
@@ -52,13 +55,13 @@ public class App {
 
         // label for audio length
         JLabel audioLengthLabel = new JLabel();
-        audioLengthLabel.setBounds(220, 380, 200, 50);
+        audioLengthLabel.setBounds(220, 170, 200, 50);
 
         // label for music name
         JLabel fileNameLabel = new JLabel();
         ImageIcon icon = new ImageIcon(System.getProperty("user.dir") + "\\pictures\\musicicon.png");
-        ImageIcon imageIcon = new ImageIcon(icon.getImage().getScaledInstance(50, 50, Image.SCALE_DEFAULT));
-        fileNameLabel.setBounds(0, 360, 500, 50);
+        ImageIcon imageIcon = new ImageIcon(icon.getImage().getScaledInstance(25, 25, Image.SCALE_DEFAULT));
+        fileNameLabel.setBounds(0, 170, 500, 50);
         fileNameLabel.setFont(new Font("Arial", Font.BOLD, 10));
 
         // imageicons for buttons
@@ -71,16 +74,35 @@ public class App {
         ImageIcon resetIcon = new ImageIcon(System.getProperty("user.dir") + "\\pictures\\reset.png");
         ImageIcon resetImageIcon = new ImageIcon(resetIcon.getImage().getScaledInstance(25, 25, Image.SCALE_DEFAULT));
 
+        ImageIcon volumeIcon = new ImageIcon(System.getProperty("user.dir") + "\\pictures\\volume.png");
+        ImageIcon volumeImageIcon = new ImageIcon(volumeIcon.getImage().getScaledInstance(25, 25, Image.SCALE_DEFAULT));
+
         System.out.println(System.getProperty("user.dir") + "\\pictures\\stop-outline.png");
 
         // music
         AppMusic music = new AppMusic();
 
+
+        // Slider
+        JSlider volumeSlider = new JSlider();
+        volumeSlider.setPreferredSize(new Dimension(400, 200));
+        volumeSlider.setBounds(330, -12, 150, 80);
+        volumeSlider.setValue(10);
+        volumeSlider.setMinimum(0);
+        volumeSlider.setMaximum(10);
+        volumeSlider.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+//                System.out.println(Float.valueOf(volumeSlider.getValue() / 10f));
+                music.setVolume(Float.valueOf(volumeSlider.getValue() / 10f));
+            }
+        });
+
         // Create Buttons
         JButton playButton = new JButton();
 //        playButton.setText("Play");
         playButton.setIcon(playImageIcon);
-        playButton.setBounds(0, 411, 166, 50);
+        playButton.setBounds(0, 145, 166, 50);
         playButton.setBorderPainted(false);
         playButton.setContentAreaFilled(false);
         playButton.setUI(new BasicButtonUI());
@@ -88,7 +110,7 @@ public class App {
         JButton pauseButton = new JButton();
 //        pauseButton.setText("Pause");
         pauseButton.setIcon(pauseImageIcon);
-        pauseButton.setBounds(166, 411, 166, 50);
+        pauseButton.setBounds(166, 145, 166, 50);
         pauseButton.setBorderPainted(false);
         pauseButton.setContentAreaFilled(false);
         pauseButton.setUI(new BasicButtonUI());
@@ -96,10 +118,28 @@ public class App {
         JButton resetButton = new JButton();
 //        resetButton.setText("Reset");
         resetButton.setIcon(resetImageIcon);
-        resetButton.setBounds(332, 411, 166, 50);
+        resetButton.setBounds(332, 145, 166, 50);
         resetButton.setBorderPainted(false);
         resetButton.setContentAreaFilled(false);
         resetButton.setUI(new BasicButtonUI());
+
+        volumeButton = new JButton();
+        volumeButton.setIcon(volumeImageIcon);
+        volumeButton.setBounds(370, 0, 166, 50);
+        volumeButton.setBorderPainted(false);
+        volumeButton.setContentAreaFilled(false);
+        volumeButton.setUI(new BasicButtonUI());
+
+        // frame
+        volumeButton.addActionListener(e -> {
+            System.out.println("Volume button clicked");
+
+            AppVolumeFrame volumeFrame = new AppVolumeFrame();
+            volumeFrame.add(volumeSlider);
+
+            volumeFrame.setVisible(true);
+        });
+
 
         // Add components
         AppFrame frame = new AppFrame();
@@ -108,6 +148,8 @@ public class App {
         frame.add(playButton);
         frame.add(pauseButton);
         frame.add(resetButton);
+//        frame.add(volumeSlider);
+        frame.add(volumeButton);
         frame.add(fileNameLabel);
 
 
@@ -115,14 +157,10 @@ public class App {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-
-                if (music.clip == null) {
-                    return;
-                }
+                if (music.clip == null) return;
 
                 if (isPlaying.get() == true) {
-                    System.out.println("HERHSERSHE: " + isPlaying.get());
-                    System.out.println("IS PLAYING!!!");
+//                    System.out.println("HERHSERSHE: " + isPlaying.get());
 
                     currentSecondsFormatted[0] = intCurrentSeconds.toString();
 
@@ -151,6 +189,10 @@ public class App {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (isPlaying.get()) {
+                    System.out.println(intCurrentSeconds);
+                    System.out.println(Math.round(music.clip.getMicrosecondLength() / 1e+6));
+                    System.out.println(music.clip.getMicrosecondPosition() /1e+6);
+                    if (Math.round(music.clip.getMicrosecondPosition() / 1e+6) >= Math.round(music.clip.getMicrosecondLength() / 1e+6 )) isPlaying.set(false);
                     intCurrentSeconds++;
                 }
             }
@@ -175,6 +217,10 @@ public class App {
                             return;
                         }
                         // ==============================
+
+                        // change volume slider value
+                        volumeSlider.setValue(10);
+
 
                         // display fileName on drop
                         fileName[0] = file.toString();
@@ -209,6 +255,10 @@ public class App {
                 } else {
                     music.playMusic(fileName[0]);
                     isPlaying.set(true);
+
+                    // TEST REMOVE LATER
+                    music.getVolume();
+                    System.out.println(music.getVolume());
 
                 }
             }
