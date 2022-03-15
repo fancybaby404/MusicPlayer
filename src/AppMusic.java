@@ -67,7 +67,7 @@ class AppMusic {
         if (clip == null) {
             App.showError("Successfully reset");
         } else {
-//            clip.setMicrosecondPosition(0);
+            clip.setMicrosecondPosition(0);
             clip.stop();
 //            clip.close();
         }
