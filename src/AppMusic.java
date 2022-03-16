@@ -1,5 +1,7 @@
 package com.musicplayer;
 
+import jaco.mp3.player.MP3Player;
+
 import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +16,6 @@ class AppMusic {
 
     AppMusic() {
         // instantiate
-
         // global vars
         currentMicro = (long) 0;
     }
