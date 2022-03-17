@@ -1,10 +1,18 @@
 package com.musicplayer;
 
-import jaco.mp3.player.MP3Player;
-
 import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
+
+import static com.musicplayer.AppTools.showError;
+
+
+/*
+This is the main music player for WAV files, it contains
+the main methods such as, playMusic, pauseMusic, resetMusic
+and other methods that would be responsible for getting
+the current volume and setting the volume.
+*/
 
 class AppMusic {
 
@@ -55,20 +63,20 @@ class AppMusic {
 
     void pauseMusic() {
         if (clip == null) {
-            App.showError("Please drag a mp3/wav file into the application first!");
+            showError("Please drag a mp3/wav file into the application first!");
         } else {
             currentMicro = clip.getMicrosecondPosition();
             clip.stop();
         }
-
-    }
+}
 
     void resetMusic() {
 
-        if (clip == null) {
-            App.showError("Successfully reset");
-        } else {
+        if (clip == null) {}
+        else {
+            System.out.println("RESETTING MUSIC.");
             clip.setMicrosecondPosition(0);
+            currentMicro = 0L;
             clip.stop();
         }
 
@@ -92,65 +100,3 @@ class AppMusic {
         gainControl.setValue(20f * (float) Math.log10(volume));
     }
 }
-
-//     try {
-//         String response = "";
-
-//         while (!response.equalsIgnoreCase("0")) {
-// System.out.println(
-//         "Welcome to JulianAudio\nType (0) to stop\n  Type (1) to reset\n  Type (2) to pause\nType (3) to resume");
-// Scanner scanner = new Scanner(System.in);
-// response = scanner.next();
-
-//             switch (response) {
-//                 case "0":
-// stop
-//                     clip.stop();
-//                     break;
-
-//                 case "1":
-//reset i think?
-//                     clip.setMicrosecondPosition(0);
-//                     break;
-
-//                 case "2":
-// pause?
-//                     currentMicro = clip.getMicrosecondPosition();
-//                     clip.stop();
-//                     break;
-
-//                 case "3":
-// resume?
-
-//                     try {
-//                         clip.start();
-//                         clip.setMicrosecondPosition(currentMicro);
-//                     } catch (Exception e) {
-
-//                     }
-
-//             }
-//         }
-//     }
-
-//     catch (UnsupportedAudioFileException e1) {
-//         System.out.println(e1);
-//     } catch(IOException e2) {
-//         System.out.println(e2);
-//     } catch (LineUnavailableException e3) {
-//         System.out.println(e3);
-//     }
-
-// }
-// public static void main(String args[]) {
-
-// Scanner scanner = Scanner(System.in);
-
-// File file = new File("audio.wav");
-// AudioInputStream audioStream = AudioInputStream(file)
-
-// Clip clip = AudioSystem.getClip();
-// clip.open(audioStream);
-
-// String response = scanner.next();
-// }

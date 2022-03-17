@@ -20,7 +20,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicButtonUI;
 
-
+import static com.musicplayer.AppTools.getFileExtension;
+import static com.musicplayer.AppTools.showError;
 
 
 public class App {
@@ -30,6 +31,7 @@ public class App {
     static int currentMinutes = 0;
     static JButton volumeButton;
     static boolean isMP3;
+    static boolean isPaused;
 
     public static void main(String[] args) {
 
@@ -78,9 +80,9 @@ public class App {
 
         System.out.println(System.getProperty("user.dir") + "\\pictures\\stop-outline.png");
 
-        // music
+        // ============= music instantiation
 
-        // wav aivv and etc
+        // wav
         AppMusic music = new AppMusic();
 
         // mp3
@@ -97,14 +99,12 @@ public class App {
         volumeSlider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-//                System.out.println(Float.valueOf(volumeSlider.getValue() / 10f));
                 music.setVolume(Float.valueOf(volumeSlider.getValue() / 10f));
             }
         });
 
         // Create Buttons
         JButton playButton = new JButton();
-//        playButton.setText("Play");
         playButton.setIcon(playImageIcon);
         playButton.setBounds(0, 145, 166, 50);
         playButton.setBorderPainted(false);
@@ -112,7 +112,6 @@ public class App {
         playButton.setUI(new BasicButtonUI());
 
         JButton pauseButton = new JButton();
-//        pauseButton.setText("Pause");
         pauseButton.setIcon(pauseImageIcon);
         pauseButton.setBounds(166, 145, 166, 50);
         pauseButton.setBorderPainted(false);
@@ -120,7 +119,6 @@ public class App {
         pauseButton.setUI(new BasicButtonUI());
 
         JButton resetButton = new JButton();
-//        resetButton.setText("Reset");
         resetButton.setIcon(resetImageIcon);
         resetButton.setBounds(332, 145, 166, 50);
         resetButton.setBorderPainted(false);
@@ -152,11 +150,10 @@ public class App {
         frame.add(playButton);
         frame.add(pauseButton);
         frame.add(resetButton);
-//        frame.add(volumeSlider);
-//        frame.add(volumeButton);
         frame.add(fileNameLabel);
 
 
+        // ======================= AUDIO DURATION FUNCTIONALITY (WAV ONLY)
         new Timer(0, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -164,8 +161,6 @@ public class App {
                 if (music.clip == null) return;
 
                 if (isPlaying.get() == true) {
-//                    System.out.println("HERHSERSHE: " + isPlaying.get());
-
                     currentSecondsFormatted[0] = intCurrentSeconds.toString();
 
                     if (intCurrentSeconds <= 9) currentSecondsFormatted[0] = "0" + currentSecondsFormatted[0];
@@ -179,7 +174,6 @@ public class App {
                     // Audio duration
                     Double audioLength = music.clip.getMicrosecondLength() / 1e+6;
                     String audioLengthFormatted = String.valueOf(audioLength.intValue() / 60) + ":" + String.valueOf(audioLength.intValue() / 60 * 60 - audioLength.intValue()).replace("-", "");
-                    // System.out.println(audioLengthFormatted);
 
                     // change gui
                     audioLengthLabel.setText(currentMinutes + ":" + currentSecondsFormatted[0] + " - " + audioLengthFormatted);
@@ -189,71 +183,78 @@ public class App {
             }
         }).start();
 
+        // ======================= AUDIO DURATION (for seconds, the delay is set to every second so every second the current second will be incremented by 1, the if statement here is that if is duration is > than the audio length, stop counting.
         new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (isPlaying.get()) {
-                    System.out.println(intCurrentSeconds);
-                    System.out.println(Math.round(music.clip.getMicrosecondLength() / 1e+6));
-                    System.out.println(music.clip.getMicrosecondPosition() /1e+6);
+                if (isPlaying.get() && !isMP3) {
                     if (Math.round(music.clip.getMicrosecondPosition() / 1e+6) >= Math.round(music.clip.getMicrosecondLength() / 1e+6 )) isPlaying.set(false);
                     intCurrentSeconds++;
                 }
             }
         }).start();
 
-        // drop functionality
+        // ======================= Drop Functionality
         myPanel.setDropTarget(new DropTarget() {
             public synchronized void drop(DropTargetDropEvent evt) {
                 try {
-                    evt.acceptDrop(DnDConstants.ACTION_COPY);
-                    List<File> droppedFiles = (List<File>) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
-                    for (File file : droppedFiles) {
 
-                        // === CHECK IF FILE IS VALID
-                        String fileExtension = getFileExtension(file);
-                        if (fileExtension.equals("mp3")) {
-                            isMP3 = true;
-                        } else if (fileExtension.equals("wav")) {
-                            isMP3 = false;
-                        }else {
-                            System.out.println("FileExtension: " + fileExtension);
-                            System.out.println(fileExtension + " is not wav or mp3");
-                            showError("Invalid file extension");
-                            return;
-                        }
-                        // ==============================
+                    System.out.println("CURRENT STATE: " + isPlaying.get());
 
+                    if (!isPlaying.get() && !isPaused) {
+                        evt.acceptDrop(DnDConstants.ACTION_COPY);
+                        List<File> droppedFiles = (List<File>) evt.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+                        for (File file : droppedFiles) {
 
-
-                        // display fileName on drop
-                        fileName[0] = file.toString();
-                        fileName[0] = fileName[0].replace('\\', '/');
-                        String[] splittedFileName = fileName[0].split("/");
-                        fileNameLabel.setIcon(imageIcon);
-                        fileNameLabel.setText(splittedFileName[splittedFileName.length - 1]);
-
-                        frame.add(fileNameLabel);
-
-                        if (!isMP3) {
-                            // change volume slider value
-                            volumeSlider.setValue(10);
-
-                            // add audio length/duration
-                            frame.add(audioLengthLabel);
-
-                            // add volume button
-                            frame.add(volumeButton);
-                        } else {
-                            try {
-                                frame.remove(volumeButton);
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            // === CHECK IF FILE IS VALID
+                            String fileExtension = getFileExtension(file);
+                            if (fileExtension.equals("mp3")) {
+                                isMP3 = true;
+                            } else if (fileExtension.equals("wav")) {
+                                isMP3 = false;
+                            } else {
+                                System.out.println("FileExtension: " + fileExtension);
+                                System.out.println(fileExtension + " is not wav or mp3");
+                                showError("Invalid file extension");
+                                return;
                             }
-                        }
+                            // ==============================
 
-                        frame.revalidate();
-                        frame.repaint();
+
+
+                            // display fileName on drop
+                            fileName[0] = file.toString();
+                            fileName[0] = fileName[0].replace('\\', '/');
+                            String[] splittedFileName = fileName[0].split("/");
+                            fileNameLabel.setIcon(imageIcon);
+                            fileNameLabel.setText(splittedFileName[splittedFileName.length - 1]);
+
+                            frame.add(fileNameLabel);
+
+                            if (!isMP3) { // (WAV)
+
+                                // change volume slider value
+                                volumeSlider.setValue(10);
+
+                                // add audio length/duration
+                                frame.add(audioLengthLabel);
+
+                                // add volume button
+                                frame.add(volumeButton);
+                            } else { // (MP3)
+                                // Remove Volume button if present
+                                try {
+                                    frame.remove(volumeButton);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            frame.revalidate();
+                            frame.repaint();
+                        }
+                    } else {
+                        showError("There is an audio currently playing, reset first.");
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -264,6 +265,7 @@ public class App {
         // ================= BUTTON ACTION LISTENERS
         playButton.addActionListener(e -> {
             if (!isMP3) {
+            // (WAV)
                 System.out.println(isPlaying.get() + " current state");
                 if (!isPlaying.get()) {
                     if (fileName[0] == null) {
@@ -271,25 +273,22 @@ public class App {
                     } else {
                         music.playMusic(fileName[0]);
                         isPlaying.set(true);
-
-                        // TEST REMOVE LATER
-                        music.getVolume();
-                        System.out.println(music.getVolume());
-
+                        isPaused = false;
                     }
                 }
                 System.out.println(isPlaying.get());
-
                 System.out.println("(wav) play button clicked");
+
             } else {
-
+            // (MP3)
                 if (!isPlaying.get()) {
-
                     if (fileName[0] == null) {
                         showError("Please drag a mp3/wav file into the application first before starting!");
                     } else {
                         mp3.addToPlayList(new File(fileName[0]));
                         mp3.play();
+                        isPlaying.set(true);
+                        isPaused = false;
 
                         System.out.println("(mp3) play button clicked");
                     }
@@ -299,31 +298,39 @@ public class App {
 
         pauseButton.addActionListener(e -> {
             if (!isMP3) {
+                // (WAV)
                 if (fileName[0] == null) {
                     // show error box that there is no file dropped
                     showError("Please drag a mp3/wav file into the application first before starting!");
                 } else {
-                    if (isPlaying.get() == true) {
+                    if (isPlaying.get()) {
                         System.out.println(isPlaying.get() + " current state");
                         music.pauseMusic();
                         isPlaying.set(false);
+                        isPaused = true;
                     }
                 }
 
                 System.out.println("(wav) pause button clicked");
             } else {
+                // (MP3)
                 if (fileName[0] == null) {
                     // show error box that there is no file dropped
                     showError("Please drag a mp3/wav file into the application first before starting!");
                 } else {
-                    mp3.pause();
-                    System.out.println("(mp3) pause button clicked");
+                    if (isPlaying.get()) {
+                        mp3.pause();
+                        System.out.println("(mp3) pause button clicked");
+                        isPlaying.set(false);
+                        isPaused = true;
+                    }
                 }
             }
         });
 
         resetButton.addActionListener(e -> {
             if (!isMP3) {
+                // (WAV)
                 if (fileName[0] == null) {
                     // show error box that there is no file dropped
                     showError("Please drag a mp3/wav file into the application first before starting!");
@@ -338,6 +345,7 @@ public class App {
                     currentMinutes = 0;
                     currentSecondsFormatted[0] = "00";
                     audioLengthLabel.setText("0:00 - 0:00");
+                    isPaused = false;
 
                     // ================== frame stuff
 
@@ -352,6 +360,7 @@ public class App {
                     System.out.println("(wav) reset button clicked");
                 }
             } else {
+                // (MP3)
                 if (fileName[0] == null) {
                     // show error box that there is no file dropped
                     showError("Please drag a mp3/wav file into the application first before starting!");
@@ -359,6 +368,7 @@ public class App {
                     mp3.getPlayList().clear();
                     fileName[0] = null;
                     isPlaying.set(false);
+                    isPaused = false;
 
                     mp3.stop();
 
@@ -377,17 +387,4 @@ public class App {
     }
 
 
-    static void showError(String message) {
-        JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",
-                JOptionPane.ERROR_MESSAGE);
-    }
-
-    static String getFileExtension(File file) {
-        String name = file.getName();
-        int lastIndexOf = name.lastIndexOf(".");
-        if (lastIndexOf == -1) {
-            return ""; // empty extension
-        }
-        return name.substring(lastIndexOf).replace(".", "");
-    }
 }
