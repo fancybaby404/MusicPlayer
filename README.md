@@ -44,7 +44,7 @@ Processor : Minimum Pentium 2 266 MHz processor
 - [@fancybaby404](https://github.com/fancybaby404)
 - [@KQMI](https://github.com/KQMl)
 - [@Ghovoren](https://github.com/Ghovoren)
-- [@Carl](carlajan186@gmail.com)
+- [@k0uga](https://github.com/k0uga)
 
 
 
