@@ -56,13 +56,7 @@ To use/run our program, you will see a space where you can drag audio files, but
 ### Video Presentation
 
 <p>
-<iframe
-       width="640" 
-       height="360"
-       src="https://web.microsoftstream.com/embed/video/bdbbd3e3-dfef-48cf-bb5b-b8d3974aa7fd?autoplay=false&showinfo=true"
-       allowfullscreen
-       style="border:none;"
-></iframe>
+<iframe width="640" height="360" src="https://web.microsoftstream.com/embed/video/bdbbd3e3-dfef-48cf-bb5b-b8d3974aa7fd?autoplay=false&showinfo=true" allowfullscreen style="border:none;"></iframe>
 </p>
 
 ## Code Contributors
