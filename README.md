@@ -7,16 +7,16 @@ This project is created by the DLSUD students of ICT-22. This application allows
 Our program is composed of 4 main components.
 
 - Dropbox 📦
-  The dropbox is responsible for selecting the audio file that is going to be played. Once a audio file is dragged into the specified       location (namely, where it says "Drag an audio file here!"), only then you are able to press the buttons below without getting an         error.
+  - The dropbox is responsible for selecting the audio file that is going to be played. Once a audio file is dragged into the specified       location (namely, where it says "Drag an audio file here!"), only then you are able to press the buttons below without getting an         error.
   
 - Play Button ▶️
-  This button is responsible for playing the audio file. 
+  - This button is responsible for playing the audio file. 
   
 - Pause Button ⏸️
-  This button is responsible for pausing the current playing audio file. 
+  - This button is responsible for pausing the current playing audio file. 
 
 - Reset Button ⏹️
-  This button is responsible for removing the current audio file if you do wish to drag a new audio file.
+  - This button is responsible for removing the current audio file if you do wish to drag a new audio file.
   
 ❗NOTE: clicking all of these buttons would give an error if you have not dropped an audio file into the program.
 
