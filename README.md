@@ -24,14 +24,14 @@ To use/run our program, you will see a space where you can drag audio files, but
 
 ## Software Requirements
 
-Operating System : Windows 7 - Windows 11
+- Operating System : Windows 7 - Windows 11
 
 ## Hardware Requirements
 
-Audio Device : Speaker, Headphones or Earphones
-RAM : At least 128 MB
-Disk Space : (127 MB) - 124 MB for JRE, 2 MB for Java Update, 1 MB for base source code
-Processor : Minimum Pentium 2 266 MHz processor
+- Audio Device : Speaker, Headphones or Earphones
+- RAM : At least 128 MB
+- Disk Space : (127 MB) - 124 MB for JRE, 2 MB for Java Update, 1 MB for base source code
+- Processor : Minimum Pentium 2 266 MHz processor
 
 
 ## Attachments
